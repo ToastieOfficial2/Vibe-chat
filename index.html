@@ -1,1 +1,1642 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <title>VibeChat | Welcome</title> 
+ 
+  <style> 
+    * { box-sizing: border-box; } 
+ 
+    body { 
+      margin: 0; 
+      min-height: 100vh; 
+      padding: 0; 
+      font-family: Arial, sans-serif; 
+      color: #f5f5fa; 
+      background: 
+        radial-gradient(ellipse at 15% 15%, #29245a, transparent 45%), 
+        radial-gradient(ellipse at 85% 85%, #172d4c, transparent 45%), 
+        #111218; 
+      overflow-x: hidden;
+    } 
 
+    [hidden] { display: none !important; }
+
+    /* =========================================================
+       1. AUTHENTICATION PAGE STYLES
+       ========================================================= */
+    .auth-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 25px;
+    }
+ 
+    .layout { 
+      width: 100%; 
+      max-width: 960px; 
+      display: grid; 
+      grid-template-columns: 1fr 410px; 
+      align-items: center; 
+      gap: 55px; 
+    } 
+ 
+    .brand { padding: 15px; } 
+ 
+    .logo { 
+      width: 58px; 
+      height: 58px; 
+      display: grid; 
+      place-items: center; 
+      background: #5865f2; 
+      border-radius: 17px; 
+      font-size: 28px; 
+      margin-bottom: 25px; 
+      box-shadow: 0 8px 24px rgba(88, 101, 242, 0.4);
+    } 
+ 
+    h1 { 
+      font-size: clamp(38px, 5vw, 56px); 
+      letter-spacing: -2px; 
+      line-height: 1.1; 
+      margin: 0 0 18px; 
+    } 
+ 
+    .brand p { 
+      color: #a5a8ba; 
+      line-height: 1.8; 
+    } 
+ 
+    .card { 
+      padding: 32px; 
+      border: 1px solid #343544; 
+      border-radius: 22px; 
+      background: #1c1d27; 
+      box-shadow: 0 25px 80px #0005; 
+    } 
+ 
+    .tabs { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      padding: 5px; 
+      gap: 5px; 
+      background: #13141c; 
+      border-radius: 12px; 
+      margin-bottom: 28px; 
+    } 
+ 
+    button { font-family: inherit; } 
+ 
+    .tab { 
+      padding: 12px; 
+      border: 0; 
+      border-radius: 9px; 
+      color: #a5a8ba; 
+      background: transparent; 
+      cursor: pointer; 
+      font-weight: bold;
+      transition: all 0.2s ease;
+    } 
+ 
+    .tab.active { 
+      color: white; 
+      background: #5865f2; 
+    } 
+ 
+    h2 { margin: 0 0 9px; font-size: 26px; } 
+ 
+    .subtitle { 
+      color: #a5a8ba; 
+      font-size: 14px; 
+      line-height: 1.6; 
+      margin: 0 0 25px; 
+    } 
+ 
+    .field { margin-bottom: 17px; } 
+ 
+    label { 
+      display: block; 
+      font-size: 11px; 
+      font-weight: bold; 
+      color: #b9bbbe;
+      margin-bottom: 8px; 
+      letter-spacing: 0.5px;
+    } 
+ 
+    input, select { 
+      width: 100%; 
+      min-width: 0; 
+      padding: 13px; 
+      border: 1px solid #383948; 
+      border-radius: 9px; 
+      background: #13141c; 
+      color: white; 
+      font-size: 14px; 
+      outline: none; 
+      transition: border-color 0.2s ease;
+    } 
+ 
+    input:focus, select:focus { 
+      border-color: #5865f2; 
+    } 
+ 
+    input::placeholder { color: #777b8e; } 
+
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrapper input {
+      padding-right: 42px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: #a5a8ba;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-password:hover { color: #ffffff; }
+
+    .toggle-password svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .forgot-btn {
+      background: none;
+      border: none;
+      color: #00aff4;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 6px;
+      display: inline-block;
+    }
+
+    .forgot-btn:hover { text-decoration: underline; }
+
+    .birthday { 
+      display: grid; 
+      grid-template-columns: 1fr 1.25fr 1.4fr; 
+      gap: 8px; 
+    } 
+ 
+    .submit { 
+      width: 100%; 
+      padding: 15px; 
+      border: 0; 
+      border-radius: 10px; 
+      background: #5865f2; 
+      color: white; 
+      font-size: 15px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      margin-top: 10px; 
+      transition: background 0.2s ease;
+    } 
+ 
+    .submit:hover { background: #4752c4; } 
+ 
+    .message { 
+      display: none; 
+      padding: 12px; 
+      margin-top: 15px; 
+      border-radius: 9px; 
+      background: rgba(237, 66, 69, 0.15); 
+      border: 1px solid #ed4245;
+      color: #ff8f8f; 
+      font-size: 13px; 
+      line-height: 1.6; 
+      overflow-wrap: anywhere; 
+    } 
+ 
+    .terms { 
+      margin-top: 22px; 
+      color: #9295a7; 
+      font-size: 12px; 
+      line-height: 1.8; 
+    } 
+
+    .footer { 
+      text-align: center; 
+      color: #85899b; 
+      font-size: 11px; 
+      line-height: 1.9; 
+      margin-top: 23px; 
+    } 
+ 
+    .creator { color: #5865f2; font-weight: bold; } 
+
+    /* =========================================================
+       2. LOADING SCREEN STYLES (10 SECONDS SPLASH)
+       ========================================================= */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #0e0f15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .toastie-title {
+      font-size: clamp(32px, 6vw, 54px);
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #7983f5, #5865f2, #00aff4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      animation: pulseGlow 2s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      from { filter: drop-shadow(0 0 10px rgba(88, 101, 242, 0.4)); }
+      to { filter: drop-shadow(0 0 25px rgba(88, 101, 242, 0.9)); }
+    }
+
+    .loader-ring {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #1e202f;
+      border-top: 4px solid #5865f2;
+      border-right: 4px solid #00aff4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 25px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .progress-bar-container {
+      width: 280px;
+      height: 8px;
+      background: #1e202f;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      border: 1px solid #2e3146;
+    }
+
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #5865f2, #00aff4);
+      border-radius: 10px;
+      transition: width 0.1s linear;
+    }
+
+    .loading-status {
+      color: #a5a8ba;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+
+    /* =========================================================
+       3. CHAT ROOM STYLES (DISCORD UI)
+       ========================================================= */
+    .app-container {
+      display: grid;
+      grid-template-columns: 240px 1fr 240px;
+      height: 100vh;
+      width: 100vw;
+      background: #313338;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      background: #2b2d31;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #1f2023;
+    }
+
+    .server-header {
+      height: 50px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1f2023;
+      font-weight: bold;
+      color: #f2f3f5;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .channels-list {
+      flex: 1;
+      padding: 12px 8px;
+      overflow-y: auto;
+    }
+
+    .channel-category {
+      font-size: 11px;
+      font-weight: bold;
+      color: #949ba4;
+      padding: 6px 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      color: #949ba4;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .channel-item.active, .channel-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: #f2f3f5;
+    }
+
+    .channel-icon { font-size: 18px; color: #80848e; }
+
+    .user-footer {
+      height: 56px;
+      background: #232428;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .user-footer:hover {
+      background: #2b2d31;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #5865f2;
+      display: grid;
+      place-items: center;
+      font-weight: bold;
+      color: white;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      background: #23a55a;
+      border: 2px solid #232428;
+      border-radius: 50%;
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+    }
+
+    .user-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: bold;
+      color: #f2f3f5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .user-sub {
+      font-size: 11px;
+      color: #949ba4;
+    }
+
+    /* Main Chat Window */
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+      background: #313338;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      height: 50px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #1f2023;
+      font-weight: bold;
+      color: #f2f3f5;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .chat-feed {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message-card {
+      display: flex;
+      gap: 14px;
+      position: relative;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.15s ease;
+    }
+
+    .message-card:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    /* Highlighted mention style */
+    .message-card.mentioned {
+      background: rgba(35, 165, 90, 0.15);
+      border-left: 3px solid #23a55a;
+    }
+
+    .msg-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .msg-author {
+      font-weight: bold;
+      font-size: 14px;
+      color: #f2f3f5;
+      cursor: pointer;
+    }
+
+    .msg-author:hover { text-decoration: underline; }
+
+    .msg-time {
+      font-size: 11px;
+      color: #949ba4;
+    }
+
+    .owner-badge {
+      background: #fee75c;
+      color: #000;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 2px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .msg-content {
+      color: #dbdee1;
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .mention-text {
+      background: rgba(35, 165, 90, 0.3);
+      color: #72f2a2;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    .media-attachment {
+      margin-top: 8px;
+      max-width: 320px;
+      max-height: 240px;
+      border-radius: 8px;
+      display: block;
+      border: 1px solid #2b2d31;
+    }
+
+    .reply-quote {
+      font-size: 12px;
+      color: #b5bac1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      padding-left: 8px;
+      border-left: 2px solid #4e5058;
+    }
+
+    .msg-actions {
+      display: none;
+      position: absolute;
+      right: 10px;
+      top: -12px;
+      background: #313338;
+      border: 1px solid #2b2d31;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .message-card:hover .msg-actions {
+      display: flex;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      color: #b5bac1;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .action-btn:hover {
+      color: white;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .action-btn.delete:hover {
+      color: #ed4245;
+    }
+
+    /* Input Dock */
+    .input-dock {
+      padding: 0 16px 20px 16px;
+      background: #313338;
+    }
+
+    .reply-preview-bar {
+      background: #2b2d31;
+      padding: 6px 12px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #b5bac1;
+      border: 1px solid #383a40;
+      border-bottom: none;
+    }
+
+    .input-wrapper {
+      background: #383a40;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 12px;
+    }
+
+    .attach-btn {
+      background: #4e5058;
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .attach-btn:hover { background: #6d6f78; }
+
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 12px 0;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .chat-input::placeholder { color: #80848e; }
+
+    /* Right Member List Sidebar */
+    .members-sidebar {
+      background: #2b2d31;
+      border-left: 1px solid #1f2023;
+      padding: 12px 8px;
+      overflow-y: auto;
+    }
+
+    .member-category {
+      font-size: 11px;
+      font-weight: bold;
+      color: #949ba4;
+      padding: 12px 8px 4px 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .member-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .member-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .member-name {
+      font-size: 13px;
+      font-weight: bold;
+      color: #949ba4;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .member-status {
+      font-size: 11px;
+      color: #80848e;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+
+    .member-item.owner .member-name {
+      color: #fee75c;
+    }
+
+    /* =========================================================
+       4. MODALS (RECOVERY, TIMEOUT, PROFILE CARD)
+       ========================================================= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: #313338;
+      border: 1px solid #383a40;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0 0 8px 0;
+      color: white;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: #b5bac1;
+      margin-bottom: 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover { text-decoration: underline; }
+
+    .btn-danger {
+      background: #ed4245;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-danger:hover { background: #c83b3e; }
+
+    /* Discord-Style User Profile Card */
+    .profile-card {
+      background: #232428;
+      width: 100%;
+      max-width: 340px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+      border: 1px solid #383a40;
+      position: relative;
+    }
+
+    .profile-banner {
+      height: 90px;
+      background: linear-gradient(135deg, #5865f2, #29245a);
+    }
+
+    .profile-avatar-container {
+      position: absolute;
+      top: 50px;
+      left: 16px;
+      border: 6px solid #232428;
+      border-radius: 50%;
+      background: #232428;
+    }
+
+    .profile-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #5865f2;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .profile-body {
+      padding: 50px 16px 16px 16px;
+      background: #111214;
+      margin: 12px;
+      border-radius: 12px;
+    }
+
+    .profile-display-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #f2f3f5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .profile-username {
+      font-size: 13px;
+      color: #b5bac1;
+      margin-bottom: 12px;
+    }
+
+    .profile-divider {
+      height: 1px;
+      background: #2b2d31;
+      margin: 12px 0;
+    }
+
+    .profile-section-title {
+      font-size: 11px;
+      font-weight: bold;
+      color: #b5bac1;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .profile-bio {
+      font-size: 13px;
+      color: #dbdee1;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .edit-bio-textarea {
+      width: 100%;
+      height: 60px;
+      background: #1e1f22;
+      border: 1px solid #383a40;
+      border-radius: 6px;
+      color: white;
+      padding: 8px;
+      font-size: 12px;
+      resize: none;
+      outline: none;
+    }
+
+    @media (max-width: 760px) { 
+      .layout { 
+        grid-template-columns: 1fr; 
+        max-width: 430px; 
+        gap: 22px; 
+      } 
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+      .sidebar, .members-sidebar { display: none; }
+    } 
+  </style> 
+</head> 
+ 
+<body> 
+
+  <!-- =========================================================
+     1. AUTHENTICATION SECTION
+     ========================================================= -->
+  <div id="authSection" class="auth-page">
+    <main class="layout"> 
+      <section class="brand"> 
+        <div class="logo">✦</div> 
+        <h1>Your people.<br>Your space.</h1> 
+        <p> 
+          Welcome to VibeChat. Find your people, join communities, 
+          share your moments, and make every conversation count. 
+        </p> 
+      </section> 
+   
+      <section class="card"> 
+        <div class="tabs"> 
+          <button class="tab active" id="loginTab" 
+            type="button" onclick="setMode('login')">Log In</button> 
+   
+          <button class="tab" id="signupTab" 
+            type="button" onclick="setMode('signup')">Sign Up</button> 
+        </div> 
+   
+        <h2 id="heading">Welcome back!</h2> 
+        <p class="subtitle" id="subtitle"> 
+          Log in with your username and password. 
+        </p> 
+   
+        <form id="authForm"> 
+          <div class="field" id="usernameField"> 
+            <label for="username">USERNAME</label> 
+            <input id="username" name="username" 
+              type="text" minlength="4" maxlength="24" 
+              pattern="[A-Za-z0-9_]+" 
+              placeholder="Enter your username" 
+              autocomplete="username" required> 
+          </div> 
+   
+          <div class="field"> 
+            <label for="password">PASSWORD</label> 
+            <div class="password-wrapper">
+              <input id="password" name="password" 
+                type="password" minlength="8" maxlength="128" 
+                placeholder="Enter your password" 
+                autocomplete="current-password" required> 
+              <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
+                <svg id="eyeIcon" viewBox="0 0 24 24">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+              </button>
+            </div>
+            <button type="button" class="forgot-btn" id="forgotBtn" onclick="openForgotModal()">Forgot your password?</button>
+          </div> 
+
+          <div id="securityQuestionField" class="field" hidden>
+            <label for="securityQ">SECURITY QUESTION (FOR PASSWORD RECOVERY)</label>
+            <select id="securityQ">
+              <option value="pet">What was the name of your first pet?</option>
+              <option value="city">In what city were you born?</option>
+              <option value="school">What was the name of your first school?</option>
+            </select>
+            <input id="securityA" type="text" placeholder="Your Answer" style="margin-top: 8px;">
+          </div>
+   
+          <div id="birthdayField" hidden> 
+            <div class="field"> 
+              <label>DATE OF BIRTH</label> 
+   
+              <div class="birthday"> 
+                <input id="day" type="number" min="1" max="31" 
+                  placeholder="Day" aria-label="Birth day"> 
+   
+                <select id="month" aria-label="Birth month"> 
+                  <option value="">Month</option> 
+                  <option value="1">January</option> 
+                  <option value="2">February</option> 
+                  <option value="3">March</option> 
+                  <option value="4">April</option> 
+                  <option value="5">May</option> 
+                  <option value="6">June</option> 
+                  <option value="7">July</option> 
+                  <option value="8">August</option> 
+                  <option value="9">September</option> 
+                  <option value="10">October</option> 
+                  <option value="11">November</option> 
+                  <option value="12">December</option> 
+                </select> 
+   
+                <input id="year" type="number" min="1900" 
+                  placeholder="Year" aria-label="Birth year"> 
+              </div> 
+            </div> 
+   
+            <p class="terms"> 
+              You must be older than 13 to create an account. 
+              Your birthday is used to check your eligibility. 
+            </p> 
+   
+            <div class="field"> 
+              <label> 
+                <input id="acceptTerms" type="checkbox" 
+                  style="width:auto; vertical-align:middle"> 
+                I agree to the Terms of Service. 
+              </label> 
+            </div> 
+          </div> 
+   
+          <button class="submit" id="submitButton" type="submit"> 
+            Log In 
+          </button> 
+   
+          <div class="message" id="message" role="status" aria-live="polite"></div> 
+        </form> 
+   
+        <div class="footer"> 
+          Made for your community. © 2026 VibeChat<br> 
+          <span class="creator">Made by Toastieofficial</span> 
+        </div> 
+      </section> 
+    </main> 
+  </div>
+
+  <!-- =========================================================
+     2. SPLASH LOADING SCREEN (10 SECONDS)
+     ========================================================= -->
+  <div id="loadingScreen" class="loading-screen" hidden>
+    <div class="toastie-title">ToastieOfficial</div>
+    <div class="loader-ring"></div>
+    <div class="progress-bar-container">
+      <div id="progressBarFill" class="progress-bar-fill"></div>
+    </div>
+    <div id="loadingStatus" class="loading-status">Connecting to secure servers...</div>
+  </div>
+
+  <!-- =========================================================
+     3. MAIN CHAT APPLICATION ROOM
+     ========================================================= -->
+  <div id="chatApp" class="app-container" hidden>
+    <!-- Left Channel Navigation -->
+    <aside class="sidebar">
+      <div class="server-header">
+        <span>VibeChat Server</span>
+        <span style="font-size: 12px; opacity: 0.6;">✦</span>
+      </div>
+      <div class="channels-list">
+        <div class="channel-category">TEXT CHANNELS</div>
+        <div class="channel-item active">
+          <span class="channel-icon">#</span>
+          <span>general</span>
+        </div>
+      </div>
+      <div class="user-footer" onclick="openProfileCard(currentUser.username)">
+        <div class="avatar-wrapper">
+          <div class="avatar" id="myAvatar">T</div>
+          <div class="status-indicator"></div>
+        </div>
+        <div class="user-info">
+          <div class="user-name" id="myUserName">
+            Toastieofficial
+            <span id="myOwnerTag" class="owner-badge" hidden>OWNER</span>
+          </div>
+          <div class="user-sub" id="myUserStatus">Online</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center Chat Feed Area -->
+    <main class="chat-area">
+      <div class="chat-header">
+        <span style="font-size: 20px; color: #80848e;">#</span>
+        <span>general</span>
+      </div>
+      
+      <div class="chat-feed" id="chatFeed">
+        <!-- Messages populate dynamically -->
+      </div>
+
+      <div class="input-dock">
+        <div id="replyBar" class="reply-preview-bar" hidden>
+          <span id="replyText">Replying to...</span>
+          <button onclick="cancelReply()" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+        </div>
+        <div class="input-wrapper">
+          <input type="file" id="mediaInput" accept="image/*,video/*" hidden onchange="handleFileUpload(event)">
+          <button class="attach-btn" onclick="document.getElementById('mediaInput').click()">+</button>
+          <input type="text" id="messageInput" class="chat-input" placeholder="Message #general" onkeydown="handleKeyPress(event)">
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Members Sidebar -->
+    <aside class="members-sidebar">
+      <div class="member-category">OWNER — <span id="ownerCount">2</span></div>
+      <div id="ownersList"></div>
+
+      <div class="member-category" style="margin-top: 10px;">MEMBERS — <span id="memberCount">0</span></div>
+      <div id="membersList"></div>
+    </aside>
+  </div>
+
+  <!-- =========================================================
+     4. MODAL OVERLAYS (PASSWORD RECOVERY, TIMEOUT, PROFILE CARD)
+     ========================================================= -->
+  <!-- Forgot Password Modal -->
+  <div id="forgotModal" class="modal-overlay" hidden>
+    <div class="modal-box">
+      <h3 class="modal-title">Reset Password</h3>
+      <p class="modal-sub">Verify your account details to set a new password.</p>
+      
+      <div class="field">
+        <label>USERNAME</label>
+        <input type="text" id="recUsername" placeholder="Enter your username">
+      </div>
+      <div class="field">
+        <label>SECURITY ANSWER</label>
+        <input type="text" id="recAnswer" placeholder="Your answer">
+      </div>
+      <div class="field">
+        <label>NEW PASSWORD</label>
+        <input type="password" id="recNewPassword" placeholder="Minimum 8 characters">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeForgotModal()">Cancel</button>
+        <button class="submit" style="width:auto; margin:0;" onclick="submitPasswordReset()">Reset Password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Owner Timeout Action Modal -->
+  <div id="timeoutModal" class="modal-overlay" hidden>
+    <div class="modal-box">
+      <h3 class="modal-title" style="color:#fee75c;">Timeout Member</h3>
+      <p class="modal-sub">Select a duration to temporarily mute this user in #general.</p>
+      
+      <div class="field">
+        <label>DURATION</label>
+        <select id="timeoutDuration">
+          <option value="30s">30 Seconds</option>
+          <option value="1h">1 Hour</option>
+          <option value="10h">10 Hours</option>
+          <option value="1d">1 Day</option>
+          <option value="remove">Remove Timeout</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeTimeoutModal()">Cancel</button>
+        <button class="btn-danger" onclick="applyTimeout()">Apply Action</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Discord-style User Profile Card Modal -->
+  <div id="profileModal" class="modal-overlay" hidden onclick="closeProfileCardOnOutside(event)">
+    <div class="profile-card" id="profileCardContent">
+      <div class="profile-banner"></div>
+      <div class="profile-avatar-container">
+        <div class="profile-avatar" id="pCardAvatar">T</div>
+      </div>
+      
+      <div class="profile-body">
+        <div class="profile-display-name" id="pCardName">
+          Toastieofficial
+          <span class="owner-badge" id="pCardOwnerBadge" hidden>OWNER</span>
+        </div>
+        <div class="profile-username" id="pCardUsername">@Toastieofficial</div>
+
+        <div class="profile-divider"></div>
+
+        <div class="profile-section-title">STATUS</div>
+        <div id="pCardStatus" style="font-size: 13px; color: #dbdee1; margin-bottom: 12px;">Online</div>
+
+        <div class="profile-section-title">ABOUT ME</div>
+        <div id="pCardBio" class="profile-bio">Welcome to my profile!</div>
+        
+        <div id="editProfileFields" hidden style="margin-top: 10px;">
+          <textarea id="editBioInput" class="edit-bio-textarea" placeholder="Write a short bio..."></textarea>
+          <button class="submit" style="padding: 8px; font-size: 12px; margin-top: 8px;" onclick="saveProfileChanges()">Save Changes</button>
+        </div>
+
+        <div id="editProfileBtnWrapper" style="margin-top: 12px;" hidden>
+          <button class="btn-secondary" style="width: 100%; background: #2b2d31;" onclick="toggleBioEdit()">Edit Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+     5. JAVASCRIPT LOGIC
+     ========================================================= -->
+  <script> 
+    let mode = "login"; 
+    let activeReply = null;
+    let selectedTimeoutTarget = null;
+    let viewingProfileUsername = null;
+
+    // Hardcoded Owners
+    const OWNERS = ["Toastieofficial", "Toastieofficial2"];
+
+    // App state loaded from LocalStorage
+    let usersDb = JSON.parse(localStorage.getItem("vibechat_users_db")) || {
+      "Toastieofficial": { password: "password123", securityQ: "pet", securityA: "toast", bio: "VibeChat Owner & Creator ✦", status: "Online" },
+      "Toastieofficial2": { password: "password123", securityQ: "pet", securityA: "toast", bio: "Co-Owner of VibeChat ✦", status: "Online" }
+    };
+
+    let messagesDb = JSON.parse(localStorage.getItem("vibechat_messages_db")) || [
+      { id: 1, author: "Toastieofficial", text: "Welcome to VibeChat general room! ✦", time: "12:00 PM" },
+      { id: 2, author: "Toastieofficial2", text: "Co-Owner account connected and operational.", time: "12:01 PM" }
+    ];
+
+    let currentUser = JSON.parse(localStorage.getItem("vibechat_session")) || null;
+
+    // DOM Elements
+    const form = document.getElementById("authForm"); 
+    const message = document.getElementById("message"); 
+    const usernameInput = document.getElementById("username"); 
+    const passwordInput = document.getElementById("password"); 
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const eyeIcon = document.getElementById("eyeIcon");
+    const day = document.getElementById("day"); 
+    const month = document.getElementById("month"); 
+    const year = document.getElementById("year"); 
+    const acceptTerms = document.getElementById("acceptTerms"); 
+
+    // Password Toggle SVG Paths
+    const openEyePath = "M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z";
+    const closedEyePath = "M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z";
+
+    togglePasswordBtn.addEventListener("click", function() {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+      eyeIcon.querySelector("path").setAttribute("d", isPassword ? closedEyePath : openEyePath);
+    });
+
+    function setMode(nextMode) { 
+      mode = nextMode; 
+      const signup = mode === "signup"; 
+ 
+      document.getElementById("loginTab").classList.toggle("active", !signup); 
+      document.getElementById("signupTab").classList.toggle("active", signup); 
+ 
+      document.getElementById("heading").textContent = signup ? "Create account" : "Welcome back!"; 
+      document.getElementById("subtitle").textContent = signup 
+        ? "Choose a username and password to join VibeChat." 
+        : "Log in with your username and password."; 
+ 
+      document.getElementById("birthdayField").hidden = !signup; 
+      document.getElementById("securityQuestionField").hidden = !signup; 
+      document.getElementById("forgotBtn").hidden = signup; 
+ 
+      day.required = signup; 
+      month.required = signup; 
+      year.required = signup; 
+      acceptTerms.required = signup; 
+ 
+      passwordInput.autocomplete = signup ? "new-password" : "current-password"; 
+      document.getElementById("submitButton").textContent = signup ? "Create Account" : "Log In"; 
+ 
+      message.style.display = "none"; 
+      message.textContent = ""; 
+    } 
+
+    function showMessage(text) { 
+      message.textContent = text; 
+      message.style.display = "block"; 
+    }
+
+    function isOlderThan13(d, m, y) { 
+      const today = new Date(); 
+      const birth = new Date(y, m - 1, d); 
+      if (birth.getFullYear() !== y || birth.getMonth() !== m - 1 || birth.getDate() !== d || birth > today) return false; 
+      let age = today.getFullYear() - y; 
+      const bdayNotPassed = today.getMonth() < m - 1 || (today.getMonth() === m - 1 && today.getDate() < d); 
+      if (bdayNotPassed) age--; 
+      return age >= 13; 
+    }
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const userVal = usernameInput.value.trim();
+      const passVal = passwordInput.value;
+
+      if (userVal.length < 4) {
+        showMessage("Username must be at least 4 characters long.");
+        return;
+      }
+
+      if (passVal.length < 8) {
+        showMessage("Password must be at least 8 characters long.");
+        return;
+      }
+
+      if (mode === "signup") {
+        if (usersDb[userVal]) {
+          showMessage("That username is already taken. Please choose another.");
+          return;
+        }
+
+        const d = Number(day.value);
+        const m = Number(month.value);
+        const y = Number(year.value);
+        if (!isOlderThan13(d, m, y)) {
+          showMessage("You must be at least 13 years old to use VibeChat.");
+          return;
+        }
+
+        if (!acceptTerms.checked) {
+          showMessage("You must accept the Terms of Service.");
+          return;
+        }
+
+        const secQ = document.getElementById("securityQ").value;
+        const secA = document.getElementById("securityA").value.trim();
+
+        usersDb[userVal] = { password: passVal, securityQ: secQ, securityA: secA, bio: "Hey there! I am using VibeChat.", status: "Online" };
+        localStorage.setItem("vibechat_users_db", JSON.stringify(usersDb));
+        
+        currentUser = { username: userVal };
+        localStorage.setItem("vibechat_session", JSON.stringify(currentUser));
+        startLoadingSequence();
+
+      } else {
+        if (!usersDb[userVal] || usersDb[userVal].password !== passVal) {
+          showMessage("Invalid username or password.");
+          return;
+        }
+
+        currentUser = { username: userVal };
+        localStorage.setItem("vibechat_session", JSON.stringify(currentUser));
+        startLoadingSequence();
+      }
+    });
+
+    // 10-Second Loading Screen Timer Sequence
+    function startLoadingSequence() {
+      document.getElementById("authSection").hidden = true;
+      const loader = document.getElementById("loadingScreen");
+      loader.hidden = false;
+
+      const fill = document.getElementById("progressBarFill");
+      const statusText = document.getElementById("loadingStatus");
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 1;
+        fill.style.width = progress + "%";
+
+        if (progress === 20) statusText.textContent = "Loading user settings & permissions...";
+        if (progress === 50) statusText.textContent = "Decrypting chat feeds...";
+        if (progress === 80) statusText.textContent = "Preparing VibeChat interface...";
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          loader.hidden = true;
+          launchChatRoom();
+        }
+      }, 100); // 100ms * 100 = 10,000ms = 10s
+    }
+
+    // Launch Chat Interface
+    function launchChatRoom() {
+      document.getElementById("chatApp").hidden = false;
+      
+      const isOwner = OWNERS.includes(currentUser.username);
+      document.getElementById("myUserName").childNodes[0].textContent = currentUser.username + " ";
+      document.getElementById("myOwnerTag").hidden = !isOwner;
+      document.getElementById("myAvatar").textContent = currentUser.username.charAt(0).toUpperCase();
+
+      renderChatMessages();
+      renderMembersSidebar();
+    }
+
+    function renderChatMessages() {
+      const feed = document.getElementById("chatFeed");
+      feed.innerHTML = "";
+
+      messagesDb.forEach(msg => {
+        const isMsgOwner = OWNERS.includes(msg.author);
+        const card = document.createElement("div");
+        card.className = "message-card";
+
+        // Green highlight if current user is @mentioned
+        if (currentUser && msg.text.includes(`@${currentUser.username}`)) {
+          card.classList.add("mentioned");
+        }
+
+        let formattedText = msg.text.replace(/@([A-Za-z0-9_]+)/g, '<span class="mention-text">@$1</span>');
+
+        let mediaHtml = "";
+        if (msg.media) {
+          if (msg.mediaType.startsWith("image/")) {
+            mediaHtml = `<img src="${msg.media}" class="media-attachment">`;
+          } else if (msg.mediaType.startsWith("video/")) {
+            mediaHtml = `<video src="${msg.media}" controls class="media-attachment"></video>`;
+          }
+        }
+
+        let replyHtml = "";
+        if (msg.replyTo) {
+          replyHtml = `<div class="reply-quote">↳ <b>@${msg.replyTo.author}</b>: ${msg.replyTo.text}</div>`;
+        }
+
+        const canDelete = currentUser && (isOwnerUser() || msg.author === currentUser.username);
+
+        card.innerHTML = `
+          <div class="avatar" onclick="openProfileCard('${msg.author}')" style="cursor:pointer">${msg.author.charAt(0).toUpperCase()}</div>
+          <div style="flex: 1;">
+            ${replyHtml}
+            <div class="msg-header">
+              <span class="msg-author" onclick="openProfileCard('${msg.author}')">${msg.author}</span>
+              ${isMsgOwner ? '<span class="owner-badge">OWNER</span>' : ''}
+              <span class="msg-time">${msg.time}</span>
+            </div>
+            <div class="msg-content">${formattedText}</div>
+            ${mediaHtml}
+          </div>
+          <div class="msg-actions">
+            <button class="action-btn" onclick="setReply(${msg.id})">Reply</button>
+            ${isOwnerUser() && !OWNERS.includes(msg.author) ? `<button class="action-btn" onclick="openTimeoutModal('${msg.author}')">Timeout</button>` : ''}
+            ${canDelete ? `<button class="action-btn delete" onclick="deleteMessage(${msg.id})">Delete</button>` : ''}
+          </div>
+        `;
+
+        feed.appendChild(card);
+      });
+
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function renderMembersSidebar() {
+      const ownersList = document.getElementById("ownersList");
+      const membersList = document.getElementById("membersList");
+      
+      ownersList.innerHTML = "";
+      membersList.innerHTML = "";
+
+      let oCount = 0;
+      let mCount = 0;
+
+      Object.keys(usersDb).forEach(uName => {
+        const isO = OWNERS.includes(uName);
+        const uObj = usersDb[uName];
+
+        const item = document.createElement("div");
+        item.className = `member-item ${isO ? 'owner' : ''}`;
+        item.onclick = () => openProfileCard(uName);
+
+        item.innerHTML = `
+          <div class="avatar">${uName.charAt(0).toUpperCase()}</div>
+          <div class="member-info">
+            <div class="member-name">
+              ${uName}
+              ${isO ? '<span class="owner-badge">OWNER</span>' : ''}
+            </div>
+            <div class="member-status">${uObj.status || 'Online'}</div>
+          </div>
+        `;
+
+        if (isO) {
+          ownersList.appendChild(item);
+          oCount++;
+        } else {
+          membersList.appendChild(item);
+          mCount++;
+        }
+      });
+
+      document.getElementById("ownerCount").textContent = oCount;
+      document.getElementById("memberCount").textContent = mCount;
+    }
+
+    function isOwnerUser() {
+      return currentUser && OWNERS.includes(currentUser.username);
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function sendMessage(mediaData = null, mediaType = null) {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+
+      if (!text && !mediaData) return;
+
+      // Check for Active Timeout
+      if (currentUser.timeoutUntil && Date.now() < currentUser.timeoutUntil) {
+        const remaining = Math.ceil((currentUser.timeoutUntil - Date.now()) / 1000);
+        alert(`You are currently timed out! Please wait ${remaining} seconds.`);
+        return;
+      }
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const newMsg = {
+        id: Date.now(),
+        author: currentUser.username,
+        text: text,
+        time: timeStr,
+        media: mediaData,
+        mediaType: mediaType,
+        replyTo: activeReply
+      };
+
+      messagesDb.push(newMsg);
+      localStorage.setItem("vibechat_messages_db", JSON.stringify(messagesDb));
+
+      input.value = "";
+      cancelReply();
+      renderChatMessages();
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        sendMessage(evt.target.result, file.type);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function setReply(msgId) {
+      const msg = messagesDb.find(m => m.id === msgId);
+      if (!msg) return;
+      activeReply = { author: msg.author, text: msg.text };
+      document.getElementById("replyText").textContent = `Replying to @${msg.author}`;
+      document.getElementById("replyBar").hidden = false;
+    }
+
+    function cancelReply() {
+      activeReply = null;
+      document.getElementById("replyBar").hidden = true;
+    }
+
+    function deleteMessage(msgId) {
+      messagesDb = messagesDb.filter(m => m.id !== msgId);
+      localStorage.setItem("vibechat_messages_db", JSON.stringify(messagesDb));
+      renderChatMessages();
+    }
+
+    // Owner Timeout Modal Logic
+    function openTimeoutModal(targetUser) {
+      selectedTimeoutTarget = targetUser;
+      document.getElementById("timeoutModal").hidden = false;
+    }
+
+    function closeTimeoutModal() {
+      selectedTimeoutTarget = null;
+      document.getElementById("timeoutModal").hidden = true;
+    }
+
+    function applyTimeout() {
+      if (!selectedTimeoutTarget) return;
+
+      const dur = document.getElementById("timeoutDuration").value;
+      let ms = 0;
+
+      if (dur === "30s") ms = 30 * 1000;
+      if (dur === "1h") ms = 60 * 60 * 1000;
+      if (dur === "10h") ms = 10 * 60 * 60 * 1000;
+      if (dur === "1d") ms = 24 * 60 * 60 * 1000;
+
+      if (dur === "remove") {
+        if (usersDb[selectedTimeoutTarget]) delete usersDb[selectedTimeoutTarget].timeoutUntil;
+      } else {
+        if (usersDb[selectedTimeoutTarget]) usersDb[selectedTimeoutTarget].timeoutUntil = Date.now() + ms;
+      }
+
+      localStorage.setItem("vibechat_users_db", JSON.stringify(usersDb));
+      closeTimeoutModal();
+      alert(`Updated timeout status for @${selectedTimeoutTarget}`);
+    }
+
+    // Interactive Profile Card System
+    function openProfileCard(username) {
+      viewingProfileUsername = username;
+      const user = usersDb[username] || { bio: "No bio written yet.", status: "Online" };
+      const isOwner = OWNERS.includes(username);
+
+      document.getElementById("pCardAvatar").textContent = username.charAt(0).toUpperCase();
+      document.getElementById("pCardName").childNodes[0].textContent = username + " ";
+      document.getElementById("pCardOwnerBadge").hidden = !isOwner;
+      document.getElementById("pCardUsername").textContent = `@${username}`;
+      document.getElementById("pCardStatus").textContent = user.status || "Online";
+      document.getElementById("pCardBio").textContent = user.bio || "No bio written yet.";
+
+      const isSelf = currentUser && currentUser.username === username;
+      document.getElementById("editProfileBtnWrapper").hidden = !isSelf;
+      document.getElementById("editProfileFields").hidden = true;
+
+      document.getElementById("profileModal").hidden = false;
+    }
+
+    function closeProfileCardOnOutside(e) {
+      if (e.target.id === "profileModal") {
+        document.getElementById("profileModal").hidden = true;
+      }
+    }
+
+    function toggleBioEdit() {
+      const editFields = document.getElementById("editProfileFields");
+      const isHidden = editFields.hidden;
+      editFields.hidden = !isHidden;
+
+      if (isHidden) {
+        document.getElementById("editBioInput").value = usersDb[currentUser.username].bio || "";
+      }
+    }
+
+    function saveProfileChanges() {
+      const newBio = document.getElementById("editBioInput").value.trim();
+      usersDb[currentUser.username].bio = newBio;
+      localStorage.setItem("vibechat_users_db", JSON.stringify(usersDb));
+
+      document.getElementById("pCardBio").textContent = newBio;
+      document.getElementById("editProfileFields").hidden = true;
+    }
+
+    // Forgot Password Logic
+    function openForgotModal() { document.getElementById("forgotModal").hidden = false; }
+    function closeForgotModal() { document.getElementById("forgotModal").hidden = true; }
+
+    function submitPasswordReset() {
+      const uname = document.getElementById("recUsername").value.trim();
+      const ans = document.getElementById("recAnswer").value.trim();
+      const newPass = document.getElementById("recNewPassword").value;
+
+      if (!usersDb[uname]) {
+        alert("Username not found.");
+        return;
+      }
+
+      const uObj = usersDb[uname];
+      if (uObj.securityA && uObj.securityA.toLowerCase() !== ans.toLowerCase()) {
+        alert("Incorrect security answer.");
+        return;
+      }
+
+      if (newPass.length < 8) {
+        alert("New password must be at least 8 characters.");
+        return;
+      }
+
+      uObj.password = newPass;
+      localStorage.setItem("vibechat_users_db", JSON.stringify(usersDb));
+      alert("Password successfully reset! You can now log in.");
+      closeForgotModal();
+    }
+
+    // Auto-login session restore check
+    if (currentUser && usersDb[currentUser.username]) {
+      startLoadingSequence();
+    }
+  </script> 
+</body> 
+</html>
