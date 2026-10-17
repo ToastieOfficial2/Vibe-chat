@@ -4,10 +4,6 @@
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1"> 
   <title>VibeChat | Welcome</title> 
-
-  <!-- Firebase Web SDK (Realtime Global Database) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
  
   <style> 
     * { box-sizing: border-box; } 
@@ -27,7 +23,9 @@
 
     [hidden] { display: none !important; }
 
-    /* Auth Page */
+    /* =========================================================
+       1. AUTHENTICATION PAGE STYLES
+       ========================================================= */
     .auth-page {
       min-height: 100vh;
       display: grid;
@@ -400,12 +398,12 @@
 
     /* Gender Ring Classes */
     .avatar.gender-girl {
-      border-color: #ff69b4 !important; /* Thin Pink Ring */
+      border-color: #ff69b4 !important;
       box-shadow: 0 0 5px rgba(255, 105, 180, 0.4);
     }
 
     .avatar.gender-boy {
-      border-color: #00aff4 !important; /* Thin Blue Ring */
+      border-color: #00aff4 !important;
       box-shadow: 0 0 5px rgba(0, 175, 244, 0.4);
     }
 
@@ -1167,23 +1165,66 @@
     </div>
   </div>
 
-  <!-- 5. FIREBASE GLOBAL REAL-TIME LOGIC -->
+  <!-- 5. JAVASCRIPT & REALTIME SYNC LOGIC -->
   <script> 
-    const firebaseConfig = {
-      databaseURL: "https://vibechat-live-default-rtdb.firebaseio.com"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
     let mode = "login"; 
     let activeReply = null;
     let selectedTimeoutTarget = null;
     let viewingProfileUsername = null;
 
     const OWNERS = ["Toastieofficial", "Toastieofficial2"];
+    
+    // WebSockets Server for live message broadcast
+    let ws = null;
+    function initWebSocket() {
+      try {
+        ws = new WebSocket('wss://free.piesocket.com/v3/vibechat_live_room_2026?api_key=VCsp9U2A63mB312&notify_self=1');
+        ws.onmessage = function(event) {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === "MSG") {
+              if (!messagesDb.some(m => m.id === data.payload.id)) {
+                messagesDb.push(data.payload);
+                localStorage.setItem("vibechat_messages_db", JSON.stringify(messagesDb));
+                renderChatMessages();
+              }
+            } else if (data.type === "USER_SYNC") {
+              usersDb[data.username] = data.userData;
+              localStorage.setItem("vibechat_users_db", JSON.stringify(usersDb));
+              renderMembersSidebar();
+              renderChatMessages();
+            } else if (data.type === "DELETE") {
+              messagesDb = messagesDb.filter(m => m.id !== data.msgId);
+              localStorage.setItem("vibechat_messages_db", JSON.stringify(messagesDb));
+              renderChatMessages();
+            }
+          } catch(e){}
+        };
+      } catch(e){}
+    }
+    initWebSocket();
 
-    let usersDb = {};
-    let messagesDb = [];
+    function broadcastEvent(type, payload) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: type, ...payload }));
+      }
+    }
+
+    const defaultAccounts = {
+      "Toastieofficial": { password: "jp_duvenhage12", securityQ: "pet", securityA: "toast", bio: "VibeChat Owner & Creator ✦", status: "Online", avatar: null, gender: "boy" },
+      "Toastieofficial2": { password: "jp_duvenhage12", securityQ: "pet", securityA: "toast", bio: "Co-Owner of VibeChat ✦", status: "Online", avatar: null, gender: "boy" }
+    };
+
+    let usersDb = JSON.parse(localStorage.getItem("vibechat_users_db")) || defaultAccounts;
+    usersDb["Toastieofficial"] = { ...defaultAccounts["Toastieofficial"], ...usersDb["Toastieofficial"], password: "jp_duvenhage12" };
+    usersDb["Toastieofficial2"] = { ...defaultAccounts["Toastieofficial2"], ...usersDb["Toastieofficial2"], password: "jp_duvenhage12" };
+    localStorage.setItem("vibechat_users_db", JSON.stringify(usersDb));
+
+    let messagesDb = JSON.parse(localStorage.getItem("vibechat_messages_db")) || [
+      { id: "1", author: "Toastieofficial", text: "Welcome to VibeChat general room! ✦", time: "12:00 PM" },
+      { id: "2", author: "Toastieofficial2", text: "Co-Owner account connected and operational.", time: "12:01 PM" }
+    ];
+
     let currentUser = JSON.parse(localStorage.getItem("vibechat_session")) || null;
 
     const form = document.getElementById("authForm"); 
@@ -1198,505 +1239,4 @@
     const acceptTerms = document.getElementById("acceptTerms"); 
 
     const openEyePath = "M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z";
-    const closedEyePath = "M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z";
-
-    togglePasswordBtn.addEventListener("click", function() {
-      const isPassword = passwordInput.type === "password";
-      passwordInput.type = isPassword ? "text" : "password";
-      eyeIcon.querySelector("path").setAttribute("d", isPassword ? closedEyePath : openEyePath);
-    });
-
-    // Real-Time Subscriptions
-    db.ref("users").on("value", (snapshot) => {
-      usersDb = snapshot.val() || {};
-      
-      if (!usersDb["Toastieofficial"]) {
-        db.ref("users/Toastieofficial").set({ password: "jp_duvenhage12", securityQ: "pet", securityA: "toast", bio: "VibeChat Owner & Creator ✦", status: "Online", gender: "boy" });
-      } else {
-        db.ref("users/Toastieofficial/password").set("jp_duvenhage12");
-      }
-
-      if (!usersDb["Toastieofficial2"]) {
-        db.ref("users/Toastieofficial2").set({ password: "jp_duvenhage12", securityQ: "pet", securityA: "toast", bio: "Co-Owner of VibeChat ✦", status: "Online", gender: "boy" });
-      } else {
-        db.ref("users/Toastieofficial2/password").set("jp_duvenhage12");
-      }
-
-      if (currentUser) {
-        updateAvatarElement(document.getElementById("myAvatar"), currentUser.username);
-        renderMembersSidebar();
-        renderChatMessages();
-      }
-    });
-
-    db.ref("messages").on("value", (snapshot) => {
-      const val = snapshot.val();
-      messagesDb = val ? Object.values(val) : [];
-      if (currentUser) renderChatMessages();
-    });
-
-    function setMode(nextMode) { 
-      mode = nextMode; 
-      const signup = mode === "signup"; 
- 
-      document.getElementById("loginTab").classList.toggle("active", !signup); 
-      document.getElementById("signupTab").classList.toggle("active", signup); 
- 
-      document.getElementById("heading").textContent = signup ? "Create account" : "Welcome back!"; 
-      document.getElementById("subtitle").textContent = signup 
-        ? "Choose a username and password to join VibeChat." 
-        : "Log in with your username and password."; 
- 
-      document.getElementById("birthdayField").hidden = !signup; 
-      document.getElementById("securityQuestionField").hidden = !signup; 
-      document.getElementById("forgotBtn").hidden = signup; 
- 
-      day.required = signup; 
-      month.required = signup; 
-      year.required = signup; 
-      acceptTerms.required = signup; 
- 
-      passwordInput.autocomplete = signup ? "new-password" : "current-password"; 
-      document.getElementById("submitButton").textContent = signup ? "Create Account" : "Log In"; 
- 
-      message.style.display = "none"; 
-      message.textContent = ""; 
-    } 
-
-    function showMessage(text) { 
-      message.textContent = text; 
-      message.style.display = "block"; 
-    }
-
-    function isOlderThan13(d, m, y) { 
-      const today = new Date(); 
-      const birth = new Date(y, m - 1, d); 
-      if (birth.getFullYear() !== y || birth.getMonth() !== m - 1 || birth.getDate() !== d || birth > today) return false; 
-      let age = today.getFullYear() - y; 
-      const bdayNotPassed = today.getMonth() < m - 1 || (today.getMonth() === m - 1 && today.getDate() < d); 
-      if (bdayNotPassed) age--; 
-      return age >= 13; 
-    }
-
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      const userVal = usernameInput.value.trim();
-      const passVal = passwordInput.value;
-
-      if (userVal.length < 4) {
-        showMessage("Username must be at least 4 characters long.");
-        return;
-      }
-
-      if (passVal.length < 8) {
-        showMessage("Password must be at least 8 characters long.");
-        return;
-      }
-
-      if (mode === "signup") {
-        if (usersDb[userVal]) {
-          showMessage("That username is already taken. Please choose another.");
-          return;
-        }
-
-        const d = Number(day.value);
-        const m = Number(month.value);
-        const y = Number(year.value);
-        if (!isOlderThan13(d, m, y)) {
-          showMessage("You must be at least 13 years old to use VibeChat.");
-          return;
-        }
-
-        if (!acceptTerms.checked) {
-          showMessage("You must accept the Terms of Service.");
-          return;
-        }
-
-        const secQ = document.getElementById("securityQ").value;
-        const secA = document.getElementById("securityA").value.trim();
-
-        const newUser = { password: passVal, securityQ: secQ, securityA: secA, bio: "Hey there! I am using VibeChat.", status: "Online", avatar: null, gender: "unspecified" };
-        db.ref("users/" + userVal).set(newUser);
-        
-        currentUser = { username: userVal };
-        localStorage.setItem("vibechat_session", JSON.stringify(currentUser));
-        startLoadingSequence();
-
-      } else {
-        if (!usersDb[userVal] || usersDb[userVal].password !== passVal) {
-          showMessage("Invalid username or password.");
-          return;
-        }
-
-        currentUser = { username: userVal };
-        localStorage.setItem("vibechat_session", JSON.stringify(currentUser));
-        startLoadingSequence();
-      }
-    });
-
-    function startLoadingSequence() {
-      document.getElementById("authSection").hidden = true;
-      const loader = document.getElementById("loadingScreen");
-      loader.hidden = false;
-
-      const fill = document.getElementById("progressBarFill");
-      const statusText = document.getElementById("loadingStatus");
-
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 1;
-        fill.style.width = progress + "%";
-
-        if (progress === 20) statusText.textContent = "Connecting to global live feed...";
-        if (progress === 50) statusText.textContent = "Decrypting chat feeds...";
-        if (progress === 80) statusText.textContent = "Preparing VibeChat interface...";
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          loader.hidden = true;
-          launchChatRoom();
-        }
-      }, 100);
-    }
-
-    function launchChatRoom() {
-      document.getElementById("chatApp").hidden = false;
-      
-      const isOwner = OWNERS.includes(currentUser.username);
-      document.getElementById("myUserName").childNodes[0].textContent = currentUser.username + " ";
-      document.getElementById("myOwnerTag").hidden = !isOwner;
-      
-      updateAvatarElement(document.getElementById("myAvatar"), currentUser.username);
-
-      renderChatMessages();
-      renderMembersSidebar();
-    }
-
-    function updateAvatarElement(element, username) {
-      if (!element) return;
-      const uData = usersDb[username] || {};
-      
-      element.classList.remove("gender-boy", "gender-girl");
-      if (uData.gender === "boy") element.classList.add("gender-boy");
-      if (uData.gender === "girl") element.classList.add("gender-girl");
-
-      if (uData.avatar) {
-        element.style.backgroundImage = `url('${uData.avatar}')`;
-        const txtSpan = element.querySelector("span");
-        if (txtSpan) txtSpan.textContent = "";
-        else element.textContent = "";
-      } else {
-        element.style.backgroundImage = "none";
-        const initial = username ? username.charAt(0).toUpperCase() : "";
-        const txtSpan = element.querySelector("span");
-        if (txtSpan) txtSpan.textContent = initial;
-        else element.textContent = initial;
-      }
-    }
-
-    function renderChatMessages() {
-      const feed = document.getElementById("chatFeed");
-      feed.innerHTML = "";
-
-      messagesDb.forEach(msg => {
-        const isMsgOwner = OWNERS.includes(msg.author);
-        const card = document.createElement("div");
-        card.className = "message-card";
-
-        if (currentUser && msg.text && msg.text.includes(`@${currentUser.username}`)) {
-          card.classList.add("mentioned");
-        }
-
-        let formattedText = (msg.text || "").replace(/@([A-Za-z0-9_]+)/g, '<span class="mention-text">@$1</span>');
-
-        let mediaHtml = "";
-        if (msg.media) {
-          if (msg.mediaType.startsWith("image/")) {
-            mediaHtml = `<img src="${msg.media}" class="media-attachment">`;
-          } else if (msg.mediaType.startsWith("video/")) {
-            mediaHtml = `<video src="${msg.media}" controls class="media-attachment"></video>`;
-          }
-        }
-
-        let replyHtml = "";
-        if (msg.replyTo) {
-          replyHtml = `<div class="reply-quote">↳ <b>@${msg.replyTo.author}</b>: ${msg.replyTo.text}</div>`;
-        }
-
-        const canDelete = currentUser && (isOwnerUser() || msg.author === currentUser.username);
-
-        card.innerHTML = `
-          <div class="avatar" id="msgAvatar_${msg.id}" onclick="openProfileCard('${msg.author}')" style="cursor:pointer"></div>
-          <div style="flex: 1;">
-            ${replyHtml}
-            <div class="msg-header">
-              <span class="msg-author" onclick="openProfileCard('${msg.author}')">${msg.author}</span>
-              ${isMsgOwner ? '<span class="owner-badge">OWNER</span>' : ''}
-              <span class="msg-time">${msg.time}</span>
-            </div>
-            <div class="msg-content">${formattedText}</div>
-            ${mediaHtml}
-          </div>
-          <div class="msg-actions">
-            <button class="action-btn" onclick="setReply('${msg.id}')">Reply</button>
-            ${isOwnerUser() && !OWNERS.includes(msg.author) ? `<button class="action-btn" onclick="openTimeoutModal('${msg.author}')">Timeout</button>` : ''}
-            ${canDelete ? `<button class="action-btn delete" onclick="deleteMessage('${msg.id}')">Delete</button>` : ''}
-          </div>
-        `;
-
-        feed.appendChild(card);
-        updateAvatarElement(document.getElementById(`msgAvatar_${msg.id}`), msg.author);
-      });
-
-      feed.scrollTop = feed.scrollHeight;
-    }
-
-    function renderMembersSidebar() {
-      const ownersList = document.getElementById("ownersList");
-      const membersList = document.getElementById("membersList");
-      
-      ownersList.innerHTML = "";
-      membersList.innerHTML = "";
-
-      let oCount = 0;
-      let mCount = 0;
-
-      Object.keys(usersDb).forEach(uName => {
-        const isO = OWNERS.includes(uName);
-        const uObj = usersDb[uName];
-
-        const item = document.createElement("div");
-        item.className = `member-item ${isO ? 'owner' : ''}`;
-        item.onclick = () => openProfileCard(uName);
-
-        item.innerHTML = `
-          <div class="avatar" id="memAvatar_${uName}"></div>
-          <div class="member-info">
-            <div class="member-name">
-              ${uName}
-              ${isO ? '<span class="owner-badge">OWNER</span>' : ''}
-            </div>
-            <div class="member-status">${uObj.status || 'Online'}</div>
-          </div>
-        `;
-
-        if (isO) {
-          ownersList.appendChild(item);
-          oCount++;
-        } else {
-          membersList.appendChild(item);
-          mCount++;
-        }
-
-        updateAvatarElement(document.getElementById(`memAvatar_${uName}`), uName);
-      });
-
-      document.getElementById("ownerCount").textContent = oCount;
-      document.getElementById("memberCount").textContent = mCount;
-    }
-
-    function isOwnerUser() {
-      return currentUser && OWNERS.includes(currentUser.username);
-    }
-
-    function handleKeyPress(e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    }
-
-    function sendMessage(mediaData = null, mediaType = null) {
-      const input = document.getElementById("messageInput");
-      const text = input.value.trim();
-
-      if (!text && !mediaData) return;
-
-      const userRecord = usersDb[currentUser.username] || {};
-      if (userRecord.timeoutUntil && Date.now() < userRecord.timeoutUntil) {
-        const remaining = Math.ceil((userRecord.timeoutUntil - Date.now()) / 1000);
-        alert(`You are currently timed out! Please wait ${remaining} seconds.`);
-        return;
-      }
-
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const msgId = "msg_" + Date.now();
-
-      const newMsg = {
-        id: msgId,
-        author: currentUser.username,
-        text: text,
-        time: timeStr,
-        media: mediaData,
-        mediaType: mediaType,
-        replyTo: activeReply
-      };
-
-      db.ref("messages/" + msgId).set(newMsg);
-
-      input.value = "";
-      cancelReply();
-    }
-
-    function handleFileUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        sendMessage(evt.target.result, file.type);
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function setReply(msgId) {
-      const msg = messagesDb.find(m => m.id === msgId);
-      if (!msg) return;
-      activeReply = { author: msg.author, text: msg.text };
-      document.getElementById("replyText").textContent = `Replying to @${msg.author}`;
-      document.getElementById("replyBar").hidden = false;
-    }
-
-    function cancelReply() {
-      activeReply = null;
-      document.getElementById("replyBar").hidden = true;
-    }
-
-    function deleteMessage(msgId) {
-      db.ref("messages/" + msgId).remove();
-    }
-
-    function openTimeoutModal(targetUser) {
-      selectedTimeoutTarget = targetUser;
-      document.getElementById("timeoutModal").hidden = false;
-    }
-
-    function closeTimeoutModal() {
-      selectedTimeoutTarget = null;
-      document.getElementById("timeoutModal").hidden = true;
-    }
-
-    function applyTimeout() {
-      if (!selectedTimeoutTarget) return;
-
-      const dur = document.getElementById("timeoutDuration").value;
-      let ms = 0;
-
-      if (dur === "30s") ms = 30 * 1000;
-      if (dur === "1h") ms = 60 * 60 * 1000;
-      if (dur === "10h") ms = 10 * 60 * 60 * 1000;
-      if (dur === "1d") ms = 24 * 60 * 60 * 1000;
-
-      if (dur === "remove") {
-        db.ref(`users/${selectedTimeoutTarget}/timeoutUntil`).remove();
-      } else {
-        db.ref(`users/${selectedTimeoutTarget}/timeoutUntil`).set(Date.now() + ms);
-      }
-
-      closeTimeoutModal();
-      alert(`Updated timeout status for @${selectedTimeoutTarget}`);
-    }
-
-    function handleAvatarUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const imgData = evt.target.result;
-        db.ref(`users/${currentUser.username}/avatar`).set(imgData);
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function openProfileCard(username) {
-      viewingProfileUsername = username;
-      const user = usersDb[username] || { bio: "No bio written yet.", status: "Online", avatar: null, gender: "unspecified" };
-      const isOwner = OWNERS.includes(username);
-
-      const pCardAv = document.getElementById("pCardAvatar");
-      updateAvatarElement(pCardAv, username);
-
-      document.getElementById("pCardName").childNodes[0].textContent = username + " ";
-      document.getElementById("pCardOwnerBadge").hidden = !isOwner;
-      document.getElementById("pCardUsername").textContent = `@${username}`;
-      document.getElementById("pCardStatus").textContent = user.status || "Online";
-      document.getElementById("pCardBio").textContent = user.bio || "No bio written yet.";
-
-      const gText = user.gender === "boy" ? "Boy (Blue Ring)" : user.gender === "girl" ? "Girl (Pink Ring)" : "Not specified";
-      document.getElementById("pCardGender").textContent = gText;
-
-      const isSelf = currentUser && currentUser.username === username;
-      document.getElementById("pfpPencilBtn").style.display = isSelf ? "grid" : "none";
-      document.getElementById("editProfileBtnWrapper").hidden = !isSelf;
-      document.getElementById("editProfileFields").hidden = true;
-
-      document.getElementById("profileModal").hidden = false;
-    }
-
-    function closeProfileCardOnOutside(e) {
-      if (e.target.id === "profileModal") {
-        document.getElementById("profileModal").hidden = true;
-      }
-    }
-
-    function toggleBioEdit() {
-      const editFields = document.getElementById("editProfileFields");
-      const isHidden = editFields.hidden;
-      editFields.hidden = !isHidden;
-
-      if (isHidden) {
-        document.getElementById("editBioInput").value = usersDb[currentUser.username].bio || "";
-        document.getElementById("editGenderSelect").value = usersDb[currentUser.username].gender || "unspecified";
-      }
-    }
-
-    function saveProfileChanges() {
-      const newBio = document.getElementById("editBioInput").value.trim();
-      const newGender = document.getElementById("editGenderSelect").value;
-
-      db.ref(`users/${currentUser.username}/bio`).set(newBio);
-      db.ref(`users/${currentUser.username}/gender`).set(newGender);
-
-      document.getElementById("pCardBio").textContent = newBio;
-      const gText = newGender === "boy" ? "Boy (Blue Ring)" : newGender === "girl" ? "Girl (Pink Ring)" : "Not specified";
-      document.getElementById("pCardGender").textContent = gText;
-      document.getElementById("editProfileFields").hidden = true;
-    }
-
-    function openForgotModal() { document.getElementById("forgotModal").hidden = false; }
-    function closeForgotModal() { document.getElementById("forgotModal").hidden = true; }
-
-    function submitPasswordReset() {
-      const uname = document.getElementById("recUsername").value.trim();
-      const ans = document.getElementById("recAnswer").value.trim();
-      const newPass = document.getElementById("recNewPassword").value;
-
-      if (!usersDb[uname]) {
-        alert("Username not found.");
-        return;
-      }
-
-      const uObj = usersDb[uname];
-      if (uObj.securityA && uObj.securityA.toLowerCase() !== ans.toLowerCase()) {
-        alert("Incorrect security answer.");
-        return;
-      }
-
-      if (newPass.length < 8) {
-        alert("New password must be at least 8 characters.");
-        return;
-      }
-
-      db.ref(`users/${uname}/password`).set(newPass);
-      alert("Password successfully reset! You can now log in.");
-      closeForgotModal();
-    }
-
-    if (currentUser) {
-      startLoadingSequence();
-    }
-  </script> 
-</body> 
-</html>
+    const closedEyePath = "M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11
